@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery.js"></script>
+    <title>Friend Finder Survey</title>
+</head>
+
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                Please rate the following statements on a scale of 1-5. 1 being I do not agree and 5 being I strongly
+                agree.
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <form>
+                    <div class="form-group">
+                        <label for="name">name</label>
+                        <textarea class="form-control" id="name" rows="1"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="question1">It is worth spending extra money to stay in nicer accomodations.</label>
+                        <select class="form-control" id="question1">
+                            <option>1</option>
+                            <option>2</option>
+                            <option>3</option>
+                            <option>4</option>
+                            <option>5</option>
+                        </select>
+                        <label for="question2">When I travel I like trying local foods... the more outside of my comfort
+                            zone the better.</label>
+                        <select class="form-control" id="question2">
+                            <option>1</option>
+                            <option>2</option>
+                            <option>3</option>
+                            <option>4</option>
+                            <option>5</option>
+                        </select>
+                        <label for="question3">When I travel I like cities over the country.</label>
+                        <select class="form-control" id="question3">
+                            <option>1</option>
+                            <option>2</option>
+                            <option>3</option>
+                            <option>4</option>
+                            <option>5</option>
+                        </select>
+                        <label for="question4">When I travel I prefer beaches and islands over mountains and
+                            hiking</label>
+                        <select class="form-control" id="question4">
+                            <option>1</option>
+                            <option>2</option>
+                            <option>3</option>
+                            <option>4</option>
+                            <option>5</option>
+                        </select>
+                        <label for="question5">When I travel I like to push my comfort zone as much as possible.</label>
+                        <select class="form-control" id="question5">
+                            <option>1</option>
+                            <option>2</option>
+                            <option>3</option>
+                            <option>4</option>
+                            <option>5</option>
+                        </select>
+                        <label for="question6">When I travel I want to go out drinking and partying frequently.</label>
+                        <select class="form-control" id="question6">
+                            <option>1</option>
+                            <option>2</option>
+                            <option>3</option>
+                            <option>4</option>
+                            <option>5</option>
+                        </select>
+                        <label for="question7">When I travel I am very meticulous on how I spend my money.</label>
+                        <select class="form-control" id="question7">
+                            <option>1</option>
+                            <option>2</option>
+                            <option>3</option>
+                            <option>4</option>
+                            <option>5</option>
+                        </select>
+                        <label for="question8">When I travel I like to take my time and go slow even if I get to see
+                            less places.</label>
+                        <select class="form-control" id="question8">
+                            <option>1</option>
+                            <option>2</option>
+                            <option>3</option>
+                            <option>4</option>
+                            <option>5</option>
+                        </select>
+                        <label for="question9">When I travel I want to see as much as humanly possible even if that
+                            means traveling at a faster pace.</label>
+                        <select class="form-control" id="question9">
+                            <option>1</option>
+                            <option>2</option>
+                            <option>3</option>
+                            <option>4</option>
+                            <option>5</option>
+                        </select>
+                        <label for="question10">I like to plan every moment of my trip and deviate the least amount
+                            possible.</label>
+                        <select class="form-control" id="question10">
+                            <option>1</option>
+                            <option>2</option>
+                            <option>3</option>
+                            <option>4</option>
+                            <option>5</option>
+                        </select>
+                        <button id="newfriend" type="submit" class="btn btn-primary">Submit</button>
+                        <button id="findfriend" type="submit" class="btn btn-primary">Show Match</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript">
+        //make a new reservation request
+        $("#newfriend").on("click", function (event) {
+            event.preventDefault();
+
+            var newfriend = {
+                // tablenum: $("#tablenum")
+                name: $("#name").val(),
+                score: [
+                    $("#question1").val(),
+                    $("#question2").val(),
+                    $("#question3").val(),
+                    $("#question4").val(),
+                    $("#question5").val(),
+                    $("#question6").val(),
+                    $("#question7").val(),
+                    $("#question8").val(),
+                    $("#question9").val(),
+                    $("#question10").val(),
+                ],
+            };
+
+            console.log(newfriend)
+
+            // send the friend request to the server
+            $.post("/api/friends", newfriend,
+                function (data) {
+                    console.log(data);
+                    alert("Adding friend");
+                });
+
+        });
+
+        function runFriendQuery() {
+            $.ajax({ url: "/api/friends", method: "GET" })
+                .then(function (friendsData) {
+                    console.log("friendsData:")
+                    console.log(friendsData);
+
+                    var bestfriend = {}
+                    var smallest = 40
+
+                    for (i = 0; i < friendsData.length - 1; i++) {
+                        if (friendsData[i].difference < smallest) {
+                            console.log("amazing")
+                            smallest = friendsData[i].difference
+                            bestfriend = friendsData[i]
+                        }
+            }
+            console.log("best friend:")
+            console.log(bestfriend)
+            console.log("smallest:" + smallest)
+            alert("your best match is: " + bestfriend.name)
+                })
+
+        }
+
+$("#findfriend").on("click", (event) => {
+        runFriendQuery()
+})
+
+
+
+
+
+
+    </script>
+</body>
+
+</html>
